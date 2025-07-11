@@ -86,9 +86,18 @@
       fetch(url)
         .then(res => res.text())
         .then(data => {
-          const filas = data.split('\n').map(linea => linea.split(','));
+          const filas = data
+  .split('\\n')
+  .filter(linea => linea.trim() !== "")
+  .map(linea => linea.split(','));
           const headers = filas.shift();
-          const objetos = filas.map(fila => Object.fromEntries(fila.map((val, i) => [headers[i], val])));
+          const objetos = filas.map(fila => {
+  const obj = {};
+  headers.forEach((h, i) => {
+    obj[h] = fila[i] ? fila[i].trim() : "";
+  });
+  return obj;
+});
           callback(objetos);
         });
     }
