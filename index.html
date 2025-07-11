@@ -57,18 +57,16 @@
   <h1>Buscador de Partidos de Huracán</h1>
   <div class="filtros">
     <input type="text" id="busquedaLibre" placeholder="Buscar texto libre...">
-    <select id="filtroAnio"><option value="">Año</option></select>
-    <select id="filtroCompeticion"><option value="">Competición</option></select>
     <select id="filtroRival"><option value="">Rival</option></select>
+    <select id="filtroCompeticion"><option value="">Competición</option></select>
     <select id="filtroResultado"><option value="">Resultado</option></select>
     <select id="filtroEstadio"><option value="">Estadio</option></select>
-    <select id="filtroArbitro"><option value="">Árbitro</option></select>
   </div>
   <table id="tabla">
     <thead>
       <tr>
-        <th>Año</th><th>Competición</th><th>Rival</th><th>Resultado</th>
-        <th>Formaciones</th><th>Fecha</th><th>Estadio</th><th>Árbitro</th>
+        <th>Fecha</th><th>Competición</th><th>Estadio</th><th>Resultado</th>
+        <th>Huracán</th><th>Rival</th><th>Árbitro</th>
         <th>Goleadores</th><th>Expulsados</th><th>Observaciones</th><th>Foto</th>
       </tr>
     </thead>
@@ -76,12 +74,10 @@
   </table>
   <script>
     const filtros = {
-      Año: document.getElementById("filtroAnio"),
-      Competición: document.getElementById("filtroCompeticion"),
       Rival: document.getElementById("filtroRival"),
+      Competición: document.getElementById("filtroCompeticion"),
       Resultado: document.getElementById("filtroResultado"),
       Estadio: document.getElementById("filtroEstadio"),
-      Árbitro: document.getElementById("filtroArbitro"),
     };
 
     const campoBusqueda = document.getElementById("busquedaLibre");
@@ -110,12 +106,10 @@
     function filtrar(data) {
       const texto = campoBusqueda.value.toLowerCase();
       return data.filter(fila =>
-        (!filtros.Año.value || fila.Año === filtros.Año.value) &&
-        (!filtros.Competición.value || fila.Competición === filtros.Competición.value) &&
         (!filtros.Rival.value || fila.Rival === filtros.Rival.value) &&
+        (!filtros.Competición.value || fila.Competición === filtros.Competición.value) &&
         (!filtros.Resultado.value || fila.Resultado === filtros.Resultado.value) &&
         (!filtros.Estadio.value || fila.Estadio === filtros.Estadio.value) &&
-        (!filtros.Árbitro.value || fila.Árbitro === filtros.Árbitro.value) &&
         (texto === "" || Object.values(fila).some(v => v.toLowerCase().includes(texto)))
       );
     }
@@ -125,7 +119,7 @@
       tbody.innerHTML = "";
       for (const fila of data) {
         const tr = document.createElement("tr");
-        for (const campo of ["Año", "Competición", "Rival", "Resultado", "Formaciones", "Fecha", "Estadio", "Árbitro", "Goleadores", "Expulsados", "Observaciones"]) {
+        for (const campo of ["Fecha", "Competición", "Estadio", "Resultado", "Huracán", "Rival", "Árbitro", "Goleadores", "Expulsados", "Observaciones"]) {
           const td = document.createElement("td");
           td.textContent = fila[campo] || "";
           tr.appendChild(td);
