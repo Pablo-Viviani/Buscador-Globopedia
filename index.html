@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Buscador de Partidos - Globopedia</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #fdf3f3;
+      color: #6b0f1a;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #b0001f;
+    }
+    .filtros {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    select, input[type="text"] {
+      padding: 6px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    input[type="text"] {
+      width: 250px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #b0001f;
+      padding: 8px;
+      text-align: left;
+      color: #6b0f1a;
+    }
+    th {
+      background-color: #b0001f;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #fce8e8;
+    }
+    img {
+      max-width: 100px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Buscador de Partidos de Huracán</h1>
+  <div class="filtros">
+    <input type="text" id="busquedaLibre" placeholder="Buscar texto libre...">
+    <select id="filtroAnio"><option value="">Año</option></select>
+    <select id="filtroCompeticion"><option value="">Competición</option></select>
+    <select id="filtroRival"><option value="">Rival</option></select>
+    <select id="filtroResultado"><option value="">Resultado</option></select>
+    <select id="filtroEstadio"><option value="">Estadio</option></select>
+    <select id="filtroArbitro"><option value="">Árbitro</option></select>
+  </div>
+  <table id="tabla">
+    <thead>
+      <tr>
+        <th>Año</th><th>Competición</th><th>Rival</th><th>Resultado</th>
+        <th>Formaciones</th><th>Fecha</th><th>Estadio</th><th>Árbitro</th>
+        <th>Goleadores</th><th>Expulsados</th><th>Observaciones</th><th>Foto</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <script>
+    const datos = [{'Año;Competición;Rival;Resultado;Formaciones;Fecha;Estadio;Árbitro;Goleadores;Expulsados;Observaciones;Fotografía': '2025;Amistoso;Danubio;2-0;"Danubio: Goicochea; Argüello; González; Perg y Rabino; Romero; Pintos; Fernández y Femia; Núñez y Fernández. Huracán: Mesa; Campo; Moya; Villar y Lescano; Watson; Spina; Pérez y Cabral; Ábila y Ramírez.";29/1/2025;Charrúa (Montevideo);Arman;"47 Ramírez; 80 Tissera";no hubo;no hubo;https://drive.google.com/file/d/10Afml5pvLgROU_YUO7Lghcm-qbwdQk8L/view?usp=drive_link'}, {'Año;Competición;Rival;Resultado;Formaciones;Fecha;Estadio;Árbitro;Goleadores;Expulsados;Observaciones;Fotografía': '2025;Apertura LPF;Belgrano (Córdoba);1-1;"Belgrano: Espínola; Compagnucci (85 Heredia); Leguizamón; Meriano (73 Troilo) y Velázquez; Menossi (66 Fernández); Quignón; Zelarayán y González; Reyna (66 Sánchez) y Jara (84 Passerini). Huracán: Galíndez; Guidara; Pereyra; Zabala (73 Pellegrino) e Ibáñez; Pérez; Gil; Watson (82 Watson) y Alanís (68 Urzi); Mazzantti (81 Cabral) y Ramírez (69 Tissera).";24/1/2025;Alberdi (Córdoba);Lobo Medina.;"34ec Zabala; 38 Mazzantti.";no hubo;no hubo;https://drive.google.com/file/d/1TBXF265cbiErCT27LCGsMjbAtKCj5uCN/view?usp=drive_link'}, {'Año;Competición;Rival;Resultado;Formaciones;Fecha;Estadio;Árbitro;Goleadores;Expulsados;Observaciones;Fotografía': '2025;Apertura LPF;Estudiantes (La Plata);0-0;"Huracán: Galíndez; Guidara; Pereyra; Pellegrino e Ibáñez; Pérez (82 Tissera); Gil; Watson (56 Miljevic) y Alanís (68 Urzi); Mazzantti y Ramírez (68 Sequeira). Estudiantes (La Plata): Mansilla; Meza; Boselli; Rodríguez y Benedetti; Neves (84 Núñez); Ascacibar; Burgos (46 Arzamendia) y Cetré (46 Manyoma); Palacios (66 Medina) y Carrillo (66 Alario).";29/1/2025;Ducó;Echenique;no hubo;90+5 Benedetti;no hubo.;https://drive.google.com/file/d/1TBXF265cbiErCT27LCGsMjbAtKCj5uCN/view?usp=drive_link'}, {'Año;Competición;Rival;Resultado;Formaciones;Fecha;Estadio;Árbitro;Goleadores;Expulsados;Observaciones;Fotografía': '2025;Apertura LPF;Boca Juniors;1-2;"Boca Juniors: Marchesín; Advíncula; Battaglia; Costa y Saracchi; Alarcón; Belmonte; Palacios (89 Zenon) y Velasco (78 Rey); Zeballos (60 Merentiel) y Cavani (90 Giménez). Huracán: Galíndez; Guidara; Pereyra; Pellegrino e Ibáñez; Pérez (77 Ojeda); Gil; Miljevic (61 Watson) y Alanís (77 Tissera); Mazzantti (86 Urzi) y Ramírez (62 Sequeira).";2/2/2025;La Bombonera;Trucco;"19 Cavani; 30 Pellegrino; 68 Palacios.";no hubo;no hubo;https://drive.google.com/file/d/1TBXF265cbiErCT27LCGsMjbAtKCj5uCN/view?usp=drive_link'}, {'Año;Competición;Rival;Resultado;Formaciones;Fecha;Estadio;Árbitro;Goleadores;Expulsados;Observaciones;Fotografía': '2025;Apertura LPF;Tigre;2-0;"Huracán: Galíndez; Guidara (87 De la Fuente); Pereyra; Pellegrino e Ibáñez; Pérez (66 Ojeda); Gil; Miljevic y Alanis (87 Cantillo); Mazzantti (62 Urzi) y Tissera (66 Ramírez). Tigre: Zenobio; Ortega; Laso; Paz y Banegas; Scipioni (77 Garay); González (67 Zalazar); López y Fértoli (77 Besozzi); Saralegui (67 Romero) y Russo.";7/2/2025;Ducó;Zunino;"17 Tissera; 83p Miljevic";no hubo;no hubo;https://drive.google.com/file/d/1TBXF265cbiErCT27LCGsMjbAtKCj5uCN/view?usp=drive_link'}];
+
+    const filtros = {
+      Año: document.getElementById("filtroAnio"),
+      Competición: document.getElementById("filtroCompeticion"),
+      Rival: document.getElementById("filtroRival"),
+      Resultado: document.getElementById("filtroResultado"),
+      Estadio: document.getElementById("filtroEstadio"),
+      Árbitro: document.getElementById("filtroArbitro"),
+    };
+
+    const campoBusqueda = document.getElementById("busquedaLibre");
+
+    function poblarSelect(select, valores) {
+      valores = [...new Set(valores.filter(v => v))].sort();
+      for (const val of valores) {
+        const opt = document.createElement("option");
+        opt.value = val;
+        opt.textContent = val;
+        select.appendChild(opt);
+      }
+    }
+
+    function filtrar(data) {
+      const texto = campoBusqueda.value.toLowerCase();
+      return data.filter(fila =>
+        (!filtros.Año.value || fila.Año === filtros.Año.value) &&
+        (!filtros.Competición.value || fila.Competición === filtros.Competición.value) &&
+        (!filtros.Rival.value || fila.Rival === filtros.Rival.value) &&
+        (!filtros.Resultado.value || fila.Resultado === filtros.Resultado.value) &&
+        (!filtros.Estadio.value || fila.Estadio === filtros.Estadio.value) &&
+        (!filtros.Árbitro.value || fila.Árbitro === filtros.Árbitro.value) &&
+        (texto === "" || Object.values(fila).some(v => v.toLowerCase().includes(texto)))
+      );
+    }
+
+    function render(data) {
+      const tbody = document.querySelector("#tabla tbody");
+      tbody.innerHTML = "";
+      for (const fila of data) {
+        const tr = document.createElement("tr");
+        for (const campo of ["Año", "Competición", "Rival", "Resultado", "Formaciones", "Fecha", "Estadio", "Árbitro", "Goleadores", "Expulsados", "Observaciones"]) {
+          const td = document.createElement("td");
+          td.textContent = fila[campo] || "";
+          tr.appendChild(td);
+        }
+        const tdImg = document.createElement("td");
+        if (fila.Fotografía) {
+          const img = document.createElement("img");
+          img.src = fila.Fotografía;
+          tdImg.appendChild(img);
+        }
+        tr.appendChild(tdImg);
+        tbody.appendChild(tr);
+      }
+    }
+
+    function actualizar(data) {
+      const filtrado = filtrar(data);
+      render(filtrado);
+    }
+
+    for (const clave in filtros) {
+      poblarSelect(filtros[clave], datos.map(f => f[clave]));
+      filtros[clave].addEventListener("change", () => actualizar(datos));
+    }
+    campoBusqueda.addEventListener("input", () => actualizar(datos));
+    render(datos);
+  </script>
+</body>
+</html>
